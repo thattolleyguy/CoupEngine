@@ -41,6 +41,8 @@ public class Game {
     public boolean nextTurn(){
         PlayerHandler currentPlayer = playerHandlers.poll();
         Action playerAction = currentPlayer.taketurn();
+
+        System.out.println("Player claims: "+playerAction.claimedRole);
         for (PlayerHandler playerHandler : playerHandlers) {
             Action response = playerHandler.respondToAction(playerAction);
             if(response.type!= Action.ActionType.ALLOW);
@@ -54,7 +56,11 @@ public class Game {
 
     public static void main(String[] args) {
         Game game = new Game(3);
-        System.out.println(game.deck);
+        boolean gameOver = game.nextTurn();
+        while(!gameOver){
+            game.nextTurn();
+        }
+
     }
 
 
