@@ -23,7 +23,7 @@ public class TestPlayerHandler extends PlayerHandler {
         return new Action(Action.ActionType.EXCHANGE);
     }
 
-    public Action respondToTarget(Action action) {
+    public Action respondToAction(Action action) {
 
         return new Action(Action.ActionType.ALLOW);
     }

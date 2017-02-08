@@ -24,7 +24,7 @@ public abstract class PlayerHandler {
 
     public abstract void informAction(Action action);
 
-    public abstract Action respondToTarget(Action action);
+    public abstract Action respondToAction(Action action);
 
     public abstract boolean challengeAction(Action action);
 

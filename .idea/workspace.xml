@@ -2,30 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8f0c6d4e-7243-41bc-b620-e182801b82eb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Game.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/MutableInteger.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/RandomPlayerHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/TestPlayerHandler.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/Action$ActionType.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/Action.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/Game.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/PlayerHandler.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/PlayerInfo$RoleState.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/PlayerInfo.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/Role.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/main/TestPlayerHandler.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/Action.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/Game.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/TestPlayerHandler.java" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/PlayerHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/PlayerHandler.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/PlayerInfo.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/PlayerInfo.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/Role.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Role.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/CoupEngine_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/CoupEngine_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Game.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Game.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/PlayerHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/PlayerHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/RandomPlayerHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/RandomPlayerHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/TestPlayerHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/TestPlayerHandler.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -58,8 +39,8 @@
       <file leaf-file-name="Game.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/Game.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="83" column="104" lean-forward="true" selection-start-line="83" selection-start-column="104" selection-end-line="83" selection-end-column="104" />
+            <state relative-caret-position="935">
+              <caret line="299" column="86" lean-forward="false" selection-start-line="299" selection-start-column="86" selection-end-line="299" selection-end-column="86" />
               <folding />
             </state>
           </provider>
@@ -78,15 +59,13 @@
       <file leaf-file-name="RandomPlayerHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/RandomPlayerHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="97" column="0" lean-forward="false" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+            <state relative-caret-position="212">
+              <caret line="38" column="79" lean-forward="false" selection-start-line="38" selection-start-column="79" selection-end-line="38" selection-end-column="79" />
               <folding>
-                <element signature="e#2662#2663#0" expanded="true" />
-                <element signature="e#2720#2721#0" expanded="true" />
-                <element signature="e#2787#2788#0" expanded="true" />
-                <element signature="e#2835#2836#0" expanded="true" />
-                <element signature="e#4029#4030#0" expanded="true" />
-                <element signature="e#4071#4072#0" expanded="true" />
+                <element signature="e#3691#3692#0" expanded="true" />
+                <element signature="e#3739#3740#0" expanded="true" />
+                <element signature="e#4933#4934#0" expanded="true" />
+                <element signature="e#4984#4985#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -95,8 +74,8 @@
       <file leaf-file-name="Action.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="501">
-              <caret line="46" column="14" lean-forward="false" selection-start-line="46" selection-start-column="14" selection-end-line="46" selection-end-column="14" />
+            <state relative-caret-position="178">
+              <caret line="39" column="63" lean-forward="true" selection-start-line="39" selection-start-column="63" selection-end-line="39" selection-end-column="63" />
               <folding />
             </state>
           </provider>
@@ -234,6 +213,7 @@
       <find>source</find>
       <find>ph.</find>
       <find>reveal</find>
+      <find>counters</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -597,12 +577,12 @@
         <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Role.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/PlayerInfo.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/MutableInteger.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/PlayerInfo.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/PlayerHandler.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/TestPlayerHandler.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/RandomPlayerHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/Game.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/RandomPlayerHandler.java" />
       </list>
     </option>
   </component>
@@ -1183,15 +1163,15 @@
       <workItem from="1486510857862" duration="1061000" />
       <workItem from="1486524495261" duration="2410000" />
       <workItem from="1486526932395" duration="5396000" />
-      <workItem from="1486567849933" duration="7974000" />
+      <workItem from="1486567849933" duration="9809000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18842000" />
+    <option name="totallyTimeSpent" value="20677000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2570" y="22" width="2560" height="1414" extended-state="1" />
+    <frame x="2570" y="22" width="2560" height="1414" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1214,7 +1194,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39939487" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39939487" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1264,7 +1244,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="15" />
+      <option name="time" value="16" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1422,8 +1402,8 @@
         <state relative-caret-position="170">
           <caret line="11" column="25" lean-forward="false" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
           <folding>
-            <element signature="e#1616#1617#0" expanded="false" />
-            <element signature="e#1645#1646#0" expanded="false" />
+            <element signature="e#1669#1670#0" expanded="false" />
+            <element signature="e#1698#1699#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1491,8 +1471,8 @@
         <state relative-caret-position="170">
           <caret line="11" column="25" lean-forward="false" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
           <folding>
-            <element signature="e#1616#1617#0" expanded="false" />
-            <element signature="e#1645#1646#0" expanded="false" />
+            <element signature="e#1669#1670#0" expanded="false" />
+            <element signature="e#1698#1699#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1550,8 +1530,8 @@
         <state relative-caret-position="136">
           <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding>
-            <element signature="e#1616#1617#0" expanded="false" />
-            <element signature="e#1645#1646#0" expanded="false" />
+            <element signature="e#1669#1670#0" expanded="false" />
+            <element signature="e#1698#1699#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1648,14 +1628,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="501">
-          <caret line="46" column="14" lean-forward="false" selection-start-line="46" selection-start-column="14" selection-end-line="46" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/src.zip!/java/util/ArrayList.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -1691,6 +1663,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/Action.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="39" column="63" lean-forward="true" selection-start-line="39" selection-start-column="63" selection-end-line="39" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/TestPlayerHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -1703,23 +1683,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/player/RandomPlayerHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="97" column="0" lean-forward="false" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+        <state relative-caret-position="212">
+          <caret line="38" column="79" lean-forward="false" selection-start-line="38" selection-start-column="79" selection-end-line="38" selection-end-column="79" />
           <folding>
-            <element signature="e#2662#2663#0" expanded="true" />
-            <element signature="e#2720#2721#0" expanded="true" />
-            <element signature="e#2787#2788#0" expanded="true" />
-            <element signature="e#2835#2836#0" expanded="true" />
-            <element signature="e#4029#4030#0" expanded="true" />
-            <element signature="e#4071#4072#0" expanded="true" />
+            <element signature="e#3691#3692#0" expanded="true" />
+            <element signature="e#3739#3740#0" expanded="true" />
+            <element signature="e#4933#4934#0" expanded="true" />
+            <element signature="e#4984#4985#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ttolley/coup/Game.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="83" column="104" lean-forward="true" selection-start-line="83" selection-start-column="104" selection-end-line="83" selection-end-column="104" />
+        <state relative-caret-position="935">
+          <caret line="299" column="86" lean-forward="false" selection-start-line="299" selection-start-column="86" selection-end-line="299" selection-end-column="86" />
           <folding />
         </state>
       </provider>

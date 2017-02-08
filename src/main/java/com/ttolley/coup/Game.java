@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.ttolley.coup.player.PlayerHandler;
 import com.ttolley.coup.player.RandomPlayerHandler;
-import com.ttolley.coup.player.TestPlayerHandler;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -61,7 +60,6 @@ public class Game {
         if (!currentPlayerHandler.myInfo.dead) {
 
 
-            PlayerHandler targetPlayerHandler = null;
             Action playerAction = currentPlayerHandler.taketurn();
 
             // Validate that player can take that action (coins)
@@ -76,22 +74,54 @@ public class Game {
 
                 playerAction.result = checkForChallenges(playerAction, currentPlayerHandler);
 
-                if (!playerAction.hasFailed() && playerAction.targetId != null) {
-                    targetPlayerHandler = playerHandlersById.get(playerAction.targetId);
+                if (!playerAction.hasFailed()) {
 
-                    Action responseAction = targetPlayerHandler.respondToTarget(playerAction);
-                    if (responseAction.type.requiredRole != null) {
-                        responseAction.result = checkForChallenges(responseAction, targetPlayerHandler);
-                        if (!responseAction.hasFailed()) {
-                            playerAction.result = FAILED_BY_COUNTER;
+                    if (playerAction.targetId != null) {
+                        PlayerHandler targetPlayerHandler = playerHandlersById.get(playerAction.targetId);
+                        if (!targetPlayerHandler.myInfo.dead) {
+                            Action responseAction = targetPlayerHandler.respondToAction(playerAction);
+                            while (!validateReponseAction(responseAction, playerAction)) {
+                                responseAction = targetPlayerHandler.respondToAction(playerAction);
+                            }
+
+
+                            if (responseAction.type != Action.ActionType.ALLOW) {
+                                System.out.println("Player " + targetPlayerHandler.myInfo.playerId + " counters with " + responseAction.type.name());
+                                responseAction.result = checkForChallenges(responseAction, targetPlayerHandler);
+                                if (!responseAction.hasFailed()) {
+                                    playerAction.result = FAILED_BY_COUNTER;
+                                }
+                                informPlayers(responseAction);
+                            }
                         }
-                        informPlayers(responseAction);
+                    } else if (playerAction.type == Action.ActionType.TAX) {
+                        for (PlayerHandler counteringPlayerHandler : playerHandlersById.values()) {
+                            if (currentPlayerHandler.myInfo.playerId == counteringPlayerHandler.myInfo.playerId || counteringPlayerHandler.myInfo.dead) {
+                                continue;
+                            }
+                            Action responseAction = counteringPlayerHandler.respondToAction(playerAction);
+                            while (!validateReponseAction(responseAction, playerAction)) {
+                                responseAction = counteringPlayerHandler.respondToAction(playerAction);
+                            }
+
+                            if (responseAction.type != Action.ActionType.ALLOW) {
+                                System.out.println("Player " + counteringPlayerHandler.myInfo.playerId + " counters with " + responseAction.type.name());
+                                responseAction.result = checkForChallenges(responseAction, counteringPlayerHandler);
+                                if (!responseAction.hasFailed())
+                                    playerAction.result = FAILED_BY_COUNTER;
+                                informPlayers(responseAction);
+                                break;
+                            }
+                        }
                     }
+
                 }
+
+
             }
             informPlayers(playerAction);
             if (!playerAction.hasFailed())
-                this.applyAction(playerAction, currentPlayerHandler, targetPlayerHandler);
+                this.applyAction(playerAction, currentPlayerHandler);
 
 
         }
@@ -99,6 +129,11 @@ public class Game {
 
 
         return playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).count() == 1;
+    }
+
+    private boolean validateReponseAction(Action responseAction, Action playerAction) {
+        return responseAction.type.counters == playerAction.type || responseAction.type == Action.ActionType.ALLOW;
+
     }
 
     private boolean validateAction(PlayerHandler currentPlayerHandler, Action playerAction) {
@@ -127,7 +162,7 @@ public class Game {
                 Optional<PlayerInfo.RoleState> proofRole = actionPlayer.myInfo.roleStates.stream().filter(rs -> rs.getRole() == action.type.requiredRole && !rs.isRevealed()).findFirst();
 
                 if (proofRole.isPresent()) {
-                    System.out.println("Player "+challengingPlayerHandler.myInfo.playerId+" loses challenge");
+                    System.out.println("Player " + challengingPlayerHandler.myInfo.playerId + " loses challenge");
                     // Add role to deck, shuffle and give a new role to player
                     deck.offer(proofRole.get().getRole());
                     Collections.shuffle(deck);
@@ -136,7 +171,7 @@ public class Game {
                     revealRole(challengingPlayerHandler);
                     return SUCCEEDED_WITH_CHALLENGE;
                 } else {
-                    System.out.println("Player "+actionPlayer.myInfo.playerId+" loses challenge");
+                    System.out.println("Player " + actionPlayer.myInfo.playerId + " loses challenge");
                     revealRole(actionPlayer);
                     return FAILED_BY_CHALLENGE;
                 }
@@ -149,6 +184,8 @@ public class Game {
     }
 
     private void revealRole(PlayerHandler playerHandler) {
+        if(playerHandler.myInfo.dead)
+            return;
         Role role;
         boolean validRole = false;
         PlayerInfo.RoleState roleState = null;
@@ -163,12 +200,12 @@ public class Game {
         }
         roleState.setRevealed(true);
         System.out.println("Player " + playerHandler.myInfo.playerId + " reveals role " + roleState.getRole().name());
-
+        informPlayers(playerHandler.myInfo.playerId, roleState.getRole());
         if (playerHandler.myInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).count() == 0) {
             playerHandler.myInfo.dead = true;
             System.out.println("Player " + playerHandler.myInfo.playerId + " is dead");
+            informPlayers(playerHandler.myInfo.playerId);
         }
-        informPlayers(playerHandler.myInfo.playerId, roleState.getRole());
 
 
     }
@@ -185,7 +222,16 @@ public class Game {
         }
     }
 
-    private void applyAction(Action action, PlayerHandler currentPlayerHandler, PlayerHandler targetPlayerHandler) {
+    private void informPlayers(int playerId) {
+        for (PlayerHandler playerHandler : playerHandlersById.values()) {
+            playerHandler.informDeath(playerId);
+        }
+    }
+
+    private void applyAction(Action action, PlayerHandler currentPlayerHandler) {
+        PlayerHandler targetPlayerHandler = null;
+        if (action.targetId != null)
+            targetPlayerHandler = playerHandlersById.get(action.targetId);
 
         switch (action.type) {
             case ASSASSINATE:
@@ -236,13 +282,22 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        Game game = new Game(3);
-        boolean gameOver = game.nextTurn();
-        while (!gameOver) {
-            gameOver = game.nextTurn();
+        System.out.println("Running 100 games");
+        int exceptionGames = 0;
+        for (int i=0;i<100; i++) {
+            try {
+                Game game = new Game(3);
+                boolean gameOver = game.nextTurn();
+                while (!gameOver) {
+                    gameOver = game.nextTurn();
+                }
+                PlayerHandler first = game.playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).findFirst().get();
+                System.out.println("Player " + first.myInfo.playerId + " wins!");
+            } catch (Exception ex) {
+                exceptionGames++;
+            }
         }
-        PlayerHandler first = game.playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).findFirst().get();
-        System.out.println("Player " + first.myInfo.playerId + " wins!");
+        System.out.println("Ran 100 games with "+exceptionGames+" ending in exceptions");
 
     }
 

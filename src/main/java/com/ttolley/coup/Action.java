@@ -40,15 +40,16 @@ public class Action {
         BLOCK_ASSASSINATION(Role.CONTESSA, ASSASSINATE, false),
         BLOCK_AS_CAPTAIN(Role.CAPTAIN, STEAL, false),
         BLOCK_AS_AMBASSADOR(Role.AMBASSADOR, STEAL, false),
+        BLOCK_FOREIGN_AID(Role.DUKE,FOREIGN_AID, false),
         ALLOW(null, null, false);
 
         public final Role requiredRole;
         public final ActionType counters;
         public final boolean requiresTarget;
 
-        ActionType(Role requiredRole, ActionType actionType, boolean requiresTarget) {
+        ActionType(Role requiredRole, ActionType counters, boolean requiresTarget) {
             this.requiredRole = requiredRole;
-            this.counters = actionType;
+            this.counters = counters;
             this.requiresTarget = requiresTarget;
         }
 

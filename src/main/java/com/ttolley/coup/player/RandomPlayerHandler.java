@@ -36,9 +36,9 @@ public class RandomPlayerHandler extends PlayerHandler {
     public Action taketurn() {
 
         if (myInfo.coins >= 10) {
-            int targetId = random.nextInt(this.playerIds.size());
+            int targetId = playerIds.get(random.nextInt(this.playerIds.size()));
             while (targetId == myInfo.playerId) {
-                targetId = random.nextInt(this.playerIds.size());
+                targetId = playerIds.get(random.nextInt(this.playerIds.size()));
             }
             Action result = new Action(Action.ActionType.COUP, targetId);
 
@@ -68,9 +68,9 @@ public class RandomPlayerHandler extends PlayerHandler {
 
         } while (!selectedAction);
         if (selection.requiresTarget) {
-            int targetId = random.nextInt(this.playerIds.size());
+            int targetId = playerIds.get(random.nextInt(this.playerIds.size()));
             while (targetId == myInfo.playerId) {
-                targetId = random.nextInt(this.playerIds.size());
+                targetId = playerIds.get(random.nextInt(this.playerIds.size()));
             }
             return new Action(selection, targetId);
         } else
@@ -84,7 +84,28 @@ public class RandomPlayerHandler extends PlayerHandler {
     }
 
     @Override
-    public Action respondToTarget(Action action) {
+    public Action respondToAction(Action action) {
+        int num = random.nextInt(100);
+        switch(action.type){
+            case ASSASSINATE:
+                if(num <=50)
+                    return new Action(Action.ActionType.BLOCK_ASSASSINATION);
+                else
+                    return new Action(Action.ActionType.ALLOW);
+            case STEAL:
+                if(num<=33)
+                    return new Action(Action.ActionType.BLOCK_AS_AMBASSADOR);
+                else if(num<=67)
+                    return new Action(Action.ActionType.BLOCK_AS_CAPTAIN);
+                else
+                    return new Action(Action.ActionType.ALLOW);
+            case FOREIGN_AID:
+
+                if(num <=50)
+                    return new Action(Action.ActionType.BLOCK_FOREIGN_AID);
+                else
+                    return new Action(Action.ActionType.ALLOW);
+        }
         return new Action(Action.ActionType.ALLOW);
     }
 
@@ -133,6 +154,6 @@ public class RandomPlayerHandler extends PlayerHandler {
 
     @Override
     public void informDeath(int playerId) {
-        playerIds.remove(playerId);
+        playerIds.remove((Integer)playerId);
     }
 }
