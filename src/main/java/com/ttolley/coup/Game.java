@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.ttolley.coup.Action.ActionResult.*;
@@ -94,30 +95,32 @@ public class Game {
                                 informPlayers(responseAction);
                             }
                         }
-                    } else if (playerAction.type == Action.ActionType.TAX) {
-                        for (PlayerHandler counteringPlayerHandler : playerHandlersById.values()) {
-                            if (currentPlayerHandler.myInfo.playerId == counteringPlayerHandler.myInfo.playerId || counteringPlayerHandler.myInfo.dead) {
-                                continue;
-                            }
-                            Action responseAction = counteringPlayerHandler.respondToAction(playerAction);
-                            while (!validateReponseAction(responseAction, playerAction)) {
-                                responseAction = counteringPlayerHandler.respondToAction(playerAction);
-                            }
-
-                            if (responseAction.type != Action.ActionType.ALLOW) {
-                                System.out.println("Player " + counteringPlayerHandler.myInfo.playerId + " counters with " + responseAction.type.name());
-                                responseAction.result = checkForChallenges(responseAction, counteringPlayerHandler);
-                                if (!responseAction.hasFailed())
-                                    playerAction.result = FAILED_BY_COUNTER;
-                                informPlayers(responseAction);
-                                break;
-                            }
-                        }
                     }
+
 
                 }
 
 
+            }
+            if (playerAction.type == Action.ActionType.FOREIGN_AID) {
+                for (PlayerHandler counteringPlayerHandler : playerHandlersById.values()) {
+                    if (currentPlayerHandler.myInfo.playerId == counteringPlayerHandler.myInfo.playerId || counteringPlayerHandler.myInfo.dead) {
+                        continue;
+                    }
+                    Action responseAction = counteringPlayerHandler.respondToAction(playerAction);
+                    while (!validateReponseAction(responseAction, playerAction)) {
+                        responseAction = counteringPlayerHandler.respondToAction(playerAction);
+                    }
+
+                    if (responseAction.type != Action.ActionType.ALLOW) {
+                        System.out.println("Player " + counteringPlayerHandler.myInfo.playerId + " counters with " + responseAction.type.name());
+                        responseAction.result = checkForChallenges(responseAction, counteringPlayerHandler);
+                        if (!responseAction.hasFailed())
+                            playerAction.result = FAILED_BY_COUNTER;
+                        informPlayers(responseAction);
+                        break;
+                    }
+                }
             }
             informPlayers(playerAction);
             if (!playerAction.hasFailed())
@@ -125,7 +128,13 @@ public class Game {
 
 
         }
+        else{
+            System.out.println("Player "+currentPlayer+" is dead");
+        }
         this.currentPlayer = ++this.currentPlayer % numOfPlayers;
+        for (PlayerInfo player : players) {
+            System.out.println("Player "+player.playerId+" has "+player.coins+" coins and "+player.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).count()+" cards alive.\n");
+        }
 
 
         return playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).count() == 1;
@@ -268,8 +277,11 @@ public class Game {
                 currentPlayerHandler.myInfo.coins += 1;
                 break;
             case STEAL:
-                currentPlayerHandler.myInfo.coins += 2;
-                targetPlayerHandler.myInfo.coins -= 2;
+                int coinsToSteal = targetPlayerHandler.myInfo.coins;
+                if(coinsToSteal>2)
+                    coinsToSteal=2;
+                currentPlayerHandler.myInfo.coins += coinsToSteal;
+                targetPlayerHandler.myInfo.coins -= coinsToSteal;
                 break;
             case TAX:
                 currentPlayerHandler.myInfo.coins += 3;
@@ -282,22 +294,52 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        System.out.println("Running 100 games");
+        int numberOfGames = 20000;
+        System.out.println("Running "+numberOfGames+" games");
         int exceptionGames = 0;
-        for (int i=0;i<100; i++) {
+        Map<Set<Role>, Integer> winsMap = Maps.newHashMap();
+        Map<Integer, Integer> winsByPlayer = Maps.newHashMap();
+
+
+        for (int i=0;i<numberOfGames; i++) {
             try {
-                Game game = new Game(3);
+                Game game = new Game(5);
+                Map<Integer, Set<Role>> playerRoles = Maps.newHashMap();
+                game.playerHandlersById.values().stream().forEach(ph->{
+                    playerRoles.put(ph.myInfo.playerId,ph.myInfo.roleStates.stream().map(PlayerInfo.RoleState::getRole).collect(Collectors.toSet()));
+                });
+
                 boolean gameOver = game.nextTurn();
                 while (!gameOver) {
                     gameOver = game.nextTurn();
                 }
-                PlayerHandler first = game.playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).findFirst().get();
-                System.out.println("Player " + first.myInfo.playerId + " wins!");
+
+                PlayerHandler winner = game.playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).findFirst().get();
+                System.out.println("Player " + winner.myInfo.playerId + " wins!");
+                Set<Role> winningRoles = playerRoles.get(winner.myInfo.playerId);
+                Integer wins = winsMap.get(winningRoles);
+                if(wins==null){
+                    wins=0;
+                }
+                winsMap.put(winningRoles, wins+1);
+
+                wins = winsByPlayer.get(winner.myInfo.playerId);
+                if(wins==null){
+                    wins=0;
+                }
+                winsByPlayer.put(winner.myInfo.playerId, wins+1);
+
             } catch (Exception ex) {
                 exceptionGames++;
             }
         }
-        System.out.println("Ran 100 games with "+exceptionGames+" ending in exceptions");
+        System.out.println("Ran "+numberOfGames+" games with "+exceptionGames+" ending in exceptions");
+        List<Map.Entry<Set<Role>, Integer>> sortedEntries = winsMap.entrySet().stream().sorted((l, r) -> {
+            return l.getValue().compareTo(r.getValue());
+        }).collect(Collectors.toList());
+        System.out.println(sortedEntries);
+        System.out.println(winsByPlayer);
+//        System.out.println(winsMap);
 
     }
 

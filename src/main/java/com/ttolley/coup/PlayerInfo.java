@@ -24,6 +24,27 @@ public class PlayerInfo {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PlayerInfo that = (PlayerInfo) o;
+
+        if (coins != that.coins) return false;
+        if (dead != that.dead) return false;
+        if (playerId != that.playerId) return false;
+        return roleStates != null ? roleStates.equals(that.roleStates) : that.roleStates == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = coins;
+        result = 31 * result + (roleStates != null ? roleStates.hashCode() : 0);
+        result = 31 * result + (dead ? 1 : 0);
+        result = 31 * result + playerId;
+        return result;
+    }
 
     public static class RoleState{
         private Role role;
@@ -50,6 +71,24 @@ public class PlayerInfo {
 
         public void setRevealed(boolean revealed) {
             this.revealed = revealed;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RoleState roleState = (RoleState) o;
+
+            if (revealed != roleState.revealed) return false;
+            return role == roleState.role;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = role != null ? role.hashCode() : 0;
+            result = 31 * result + (revealed ? 1 : 0);
+            return result;
         }
     }
 

@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class RandomPlayerHandler extends PlayerHandler {
 
-    Random random = new Random();
+    final Random random;
     List<Action.ActionType> validTurnActions = Lists.newArrayList();
 
     public RandomPlayerHandler(PlayerInfo myInfo, List<Integer> playerIds) {
@@ -30,6 +30,7 @@ public class RandomPlayerHandler extends PlayerHandler {
         validTurnActions.add(Action.ActionType.STEAL);
         validTurnActions.add(Action.ActionType.TAX);
         playerIds.remove(myInfo.playerId);
+        random = new Random(myInfo.hashCode());
     }
 
     @Override
@@ -111,7 +112,7 @@ public class RandomPlayerHandler extends PlayerHandler {
 
     @Override
     public boolean challengeAction(Action action) {
-        return random.nextInt(100) >= 50;
+        return random.nextInt(playerIds.size()*2) ==0;
     }
 
     @Override
