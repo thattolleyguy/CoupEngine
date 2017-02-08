@@ -5,7 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.ttolley.coup.player.PlayerHandler;
 import com.ttolley.coup.player.RandomPlayerHandler;
+import com.ttolley.coup.player.TruthPlayerHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,9 +50,18 @@ public class Game {
         }
 
         List<Integer> playerIds = players.stream().map(p -> p.playerId).collect(Collectors.toList());
+        boolean addedTruthPlayer = false;
         for (PlayerInfo player : players) {
-            playerHandlersById.put(player.playerId, new RandomPlayerHandler(player, Lists.newArrayList(playerIds)));
+
+            ArrayList<Integer> otherPlayerIds = Lists.newArrayList(playerIds);
+            otherPlayerIds.remove((Integer) player.playerId);
+            if (!addedTruthPlayer) {
+                playerHandlersById.put(player.playerId, new TruthPlayerHandler(player, otherPlayerIds));
+                addedTruthPlayer = true;
+            } else
+                playerHandlersById.put(player.playerId, new RandomPlayerHandler(player, otherPlayerIds));
         }
+
 
     }
 
@@ -58,7 +69,7 @@ public class Game {
         PlayerHandler currentPlayerHandler = playerHandlersById.get(currentPlayer);
 
 
-        if (!currentPlayerHandler.myInfo.dead) {
+        if (!currentPlayerHandler.playerInfo.dead) {
 
 
             Action playerAction = currentPlayerHandler.taketurn();
@@ -69,7 +80,7 @@ public class Game {
             }
 
 
-            System.out.println("Player " + currentPlayerHandler.myInfo.playerId + " does " + playerAction.type.name() + " and claims " + playerAction.type.requiredRole + " targeting player " + playerAction.targetId);
+            System.out.println(playerAction);
 
             if (playerAction.type.requiredRole != null) {
 
@@ -77,9 +88,9 @@ public class Game {
 
                 if (!playerAction.hasFailed()) {
 
-                    if (playerAction.targetId != null) {
-                        PlayerHandler targetPlayerHandler = playerHandlersById.get(playerAction.targetId);
-                        if (!targetPlayerHandler.myInfo.dead) {
+                    if (playerAction.targetPlayerId != null) {
+                        PlayerHandler targetPlayerHandler = playerHandlersById.get(playerAction.targetPlayerId);
+                        if (!targetPlayerHandler.playerInfo.dead) {
                             Action responseAction = targetPlayerHandler.respondToAction(playerAction);
                             while (!validateReponseAction(responseAction, playerAction)) {
                                 responseAction = targetPlayerHandler.respondToAction(playerAction);
@@ -87,7 +98,7 @@ public class Game {
 
 
                             if (responseAction.type != Action.ActionType.ALLOW) {
-                                System.out.println("Player " + targetPlayerHandler.myInfo.playerId + " counters with " + responseAction.type.name());
+                                System.out.println("Player " + targetPlayerHandler.playerInfo.playerId + " counters with " + responseAction.type.name());
                                 responseAction.result = checkForChallenges(responseAction, targetPlayerHandler);
                                 if (!responseAction.hasFailed()) {
                                     playerAction.result = FAILED_BY_COUNTER;
@@ -104,7 +115,7 @@ public class Game {
             }
             if (playerAction.type == Action.ActionType.FOREIGN_AID) {
                 for (PlayerHandler counteringPlayerHandler : playerHandlersById.values()) {
-                    if (currentPlayerHandler.myInfo.playerId == counteringPlayerHandler.myInfo.playerId || counteringPlayerHandler.myInfo.dead) {
+                    if (currentPlayerHandler.playerInfo.playerId == counteringPlayerHandler.playerInfo.playerId || counteringPlayerHandler.playerInfo.dead) {
                         continue;
                     }
                     Action responseAction = counteringPlayerHandler.respondToAction(playerAction);
@@ -113,7 +124,7 @@ public class Game {
                     }
 
                     if (responseAction.type != Action.ActionType.ALLOW) {
-                        System.out.println("Player " + counteringPlayerHandler.myInfo.playerId + " counters with " + responseAction.type.name());
+                        System.out.println("Player " + counteringPlayerHandler.playerInfo.playerId + " counters with " + responseAction.type.name());
                         responseAction.result = checkForChallenges(responseAction, counteringPlayerHandler);
                         if (!responseAction.hasFailed())
                             playerAction.result = FAILED_BY_COUNTER;
@@ -127,17 +138,17 @@ public class Game {
                 this.applyAction(playerAction, currentPlayerHandler);
 
 
-        }
-        else{
-            System.out.println("Player "+currentPlayer+" is dead");
+        } else {
+            System.out.println("Player " + currentPlayer + " is dead");
         }
         this.currentPlayer = ++this.currentPlayer % numOfPlayers;
         for (PlayerInfo player : players) {
-            System.out.println("Player "+player.playerId+" has "+player.coins+" coins and "+player.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).count()+" cards alive.\n");
+            System.out.println(player);
         }
+        System.out.println();
 
 
-        return playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).count() == 1;
+        return playerHandlersById.values().stream().filter(ph -> !ph.playerInfo.dead).count() == 1;
     }
 
     private boolean validateReponseAction(Action responseAction, Action playerAction) {
@@ -146,14 +157,15 @@ public class Game {
     }
 
     private boolean validateAction(PlayerHandler currentPlayerHandler, Action playerAction) {
-        if (currentPlayerHandler.myInfo.coins >= 10 && playerAction.type != Action.ActionType.COUP)
+        if (currentPlayerHandler.playerInfo.coins >= 10 && playerAction.type != Action.ActionType.COUP)
             return false;
         switch (playerAction.type) {
             case ASSASSINATE:
-                return currentPlayerHandler.myInfo.coins >= 3;
+                return currentPlayerHandler.playerInfo.coins >= 3&&playerAction.targetPlayerId!=null;
             case COUP:
-                return currentPlayerHandler.myInfo.coins >= 7;
-
+                return currentPlayerHandler.playerInfo.coins >= 7&&playerAction.targetPlayerId!=null;
+            case STEAL:
+                return playerAction.targetPlayerId!=null;
         }
         return true;
     }
@@ -161,17 +173,17 @@ public class Game {
     private Action.ActionResult checkForChallenges(Action action, PlayerHandler actionPlayer) {
         Action.ActionResult result = SUCCEEDED_WITHOUT_CHALLENGE;
         for (PlayerHandler challengingPlayerHandler : playerHandlersById.values()) {
-            if (actionPlayer.myInfo.playerId == challengingPlayerHandler.myInfo.playerId || challengingPlayerHandler.myInfo.dead) {
+            if (actionPlayer.playerInfo.playerId == challengingPlayerHandler.playerInfo.playerId || challengingPlayerHandler.playerInfo.dead) {
                 continue;
             }
 
             if (challengingPlayerHandler.challengeAction(action)) {
-                System.out.println("Player " + challengingPlayerHandler.myInfo.playerId + " challenges player " + actionPlayer.myInfo.playerId + " claim of " + action.type.requiredRole.name());
+                System.out.println("Player " + challengingPlayerHandler.playerInfo.playerId + " challenges player " + actionPlayer.playerInfo.playerId + " claim of " + action.type.requiredRole.name());
                 // Does player have that role
-                Optional<PlayerInfo.RoleState> proofRole = actionPlayer.myInfo.roleStates.stream().filter(rs -> rs.getRole() == action.type.requiredRole && !rs.isRevealed()).findFirst();
+                Optional<PlayerInfo.RoleState> proofRole = actionPlayer.playerInfo.roleStates.stream().filter(rs -> rs.getRole() == action.type.requiredRole && !rs.isRevealed()).findFirst();
 
                 if (proofRole.isPresent()) {
-                    System.out.println("Player " + challengingPlayerHandler.myInfo.playerId + " loses challenge");
+                    System.out.println("Player " + challengingPlayerHandler.playerInfo.playerId + " loses challenge");
                     // Add role to deck, shuffle and give a new role to player
                     deck.offer(proofRole.get().getRole());
                     Collections.shuffle(deck);
@@ -180,7 +192,7 @@ public class Game {
                     revealRole(challengingPlayerHandler);
                     return SUCCEEDED_WITH_CHALLENGE;
                 } else {
-                    System.out.println("Player " + actionPlayer.myInfo.playerId + " loses challenge");
+                    System.out.println("Player " + actionPlayer.playerInfo.playerId + " loses challenge");
                     revealRole(actionPlayer);
                     return FAILED_BY_CHALLENGE;
                 }
@@ -193,7 +205,7 @@ public class Game {
     }
 
     private void revealRole(PlayerHandler playerHandler) {
-        if(playerHandler.myInfo.dead)
+        if (playerHandler.playerInfo.dead)
             return;
         Role role;
         boolean validRole = false;
@@ -202,18 +214,18 @@ public class Game {
             role = playerHandler.revealRole();
             // Because JAVA...
             final Role finalRole = role;
-            Optional<PlayerInfo.RoleState> first = playerHandler.myInfo.roleStates.stream().filter(rs -> rs.getRole() == finalRole && !rs.isRevealed()).findFirst();
+            Optional<PlayerInfo.RoleState> first = playerHandler.playerInfo.roleStates.stream().filter(rs -> rs.getRole() == finalRole && !rs.isRevealed()).findFirst();
             validRole = first.isPresent();
             if (validRole)
                 roleState = first.get();
         }
         roleState.setRevealed(true);
-        System.out.println("Player " + playerHandler.myInfo.playerId + " reveals role " + roleState.getRole().name());
-        informPlayers(playerHandler.myInfo.playerId, roleState.getRole());
-        if (playerHandler.myInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).count() == 0) {
-            playerHandler.myInfo.dead = true;
-            System.out.println("Player " + playerHandler.myInfo.playerId + " is dead");
-            informPlayers(playerHandler.myInfo.playerId);
+        System.out.println("Player " + playerHandler.playerInfo.playerId + " reveals role " + roleState.getRole().name());
+        informPlayers(playerHandler.playerInfo.playerId, roleState.getRole());
+        if (playerHandler.playerInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).count() == 0) {
+            playerHandler.playerInfo.dead = true;
+            System.out.println("Player " + playerHandler.playerInfo.playerId + " is dead");
+            informPlayers(playerHandler.playerInfo.playerId);
         }
 
 
@@ -239,13 +251,13 @@ public class Game {
 
     private void applyAction(Action action, PlayerHandler currentPlayerHandler) {
         PlayerHandler targetPlayerHandler = null;
-        if (action.targetId != null)
-            targetPlayerHandler = playerHandlersById.get(action.targetId);
+        if (action.targetPlayerId != null)
+            targetPlayerHandler = playerHandlersById.get(action.targetPlayerId);
 
         switch (action.type) {
             case ASSASSINATE:
-                currentPlayerHandler.myInfo.coins -= 3;
-                if (!targetPlayerHandler.myInfo.dead)
+                currentPlayerHandler.playerInfo.coins -= 3;
+                if (!targetPlayerHandler.playerInfo.dead)
                     revealRole(targetPlayerHandler);
                 break;
             case EXCHANGE:
@@ -253,13 +265,13 @@ public class Game {
                 newRoles.add(deck.poll());
                 newRoles.add(deck.poll());
 
-                currentPlayerHandler.myInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).map(PlayerInfo.RoleState::getRole).forEach(newRoles::add);
+                currentPlayerHandler.playerInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).map(PlayerInfo.RoleState::getRole).forEach(newRoles::add);
                 long rolesToKeep = newRoles.size() - 2;
                 final ExchangeResult result = currentPlayerHandler.exchangeRoles(newRoles, rolesToKeep);
                 //validate result has right number of roles to keep
 
                 final MutableInteger curRoleIndex = new MutableInteger(0);
-                currentPlayerHandler.myInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).forEach(rs -> {
+                currentPlayerHandler.playerInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).forEach(rs -> {
                     if (curRoleIndex.getValue() < result.toKeep.size()) {
                         Role newRole = result.toKeep.get(curRoleIndex.getValue());
                         rs.setRole(newRole);
@@ -271,42 +283,42 @@ public class Game {
                 break;
 
             case FOREIGN_AID:
-                currentPlayerHandler.myInfo.coins += 2;
+                currentPlayerHandler.playerInfo.coins += 2;
                 break;
             case INCOME:
-                currentPlayerHandler.myInfo.coins += 1;
+                currentPlayerHandler.playerInfo.coins += 1;
                 break;
             case STEAL:
-                int coinsToSteal = targetPlayerHandler.myInfo.coins;
-                if(coinsToSteal>2)
-                    coinsToSteal=2;
-                currentPlayerHandler.myInfo.coins += coinsToSteal;
-                targetPlayerHandler.myInfo.coins -= coinsToSteal;
+                int coinsToSteal = targetPlayerHandler.playerInfo.coins;
+                if (coinsToSteal > 2)
+                    coinsToSteal = 2;
+                currentPlayerHandler.playerInfo.coins += coinsToSteal;
+                targetPlayerHandler.playerInfo.coins -= coinsToSteal;
                 break;
             case TAX:
-                currentPlayerHandler.myInfo.coins += 3;
+                currentPlayerHandler.playerInfo.coins += 3;
                 break;
             case COUP:
-                currentPlayerHandler.myInfo.coins -= 7;
+                currentPlayerHandler.playerInfo.coins -= 7;
                 revealRole(targetPlayerHandler);
                 break;
         }
     }
 
     public static void main(String[] args) {
-        int numberOfGames = 20000;
-        System.out.println("Running "+numberOfGames+" games");
+        int numberOfGames = 10000;
+        System.out.println("Running " + numberOfGames + " games");
         int exceptionGames = 0;
         Map<Set<Role>, Integer> winsMap = Maps.newHashMap();
         Map<Integer, Integer> winsByPlayer = Maps.newHashMap();
 
 
-        for (int i=0;i<numberOfGames; i++) {
+        for (int i = 0; i < numberOfGames; i++) {
             try {
                 Game game = new Game(5);
                 Map<Integer, Set<Role>> playerRoles = Maps.newHashMap();
-                game.playerHandlersById.values().stream().forEach(ph->{
-                    playerRoles.put(ph.myInfo.playerId,ph.myInfo.roleStates.stream().map(PlayerInfo.RoleState::getRole).collect(Collectors.toSet()));
+                game.playerHandlersById.values().stream().forEach(ph -> {
+                    playerRoles.put(ph.playerInfo.playerId, ph.playerInfo.roleStates.stream().map(PlayerInfo.RoleState::getRole).collect(Collectors.toSet()));
                 });
 
                 boolean gameOver = game.nextTurn();
@@ -314,26 +326,27 @@ public class Game {
                     gameOver = game.nextTurn();
                 }
 
-                PlayerHandler winner = game.playerHandlersById.values().stream().filter(ph -> !ph.myInfo.dead).findFirst().get();
-                System.out.println("Player " + winner.myInfo.playerId + " wins!");
-                Set<Role> winningRoles = playerRoles.get(winner.myInfo.playerId);
+                PlayerHandler winner = game.playerHandlersById.values().stream().filter(ph -> !ph.playerInfo.dead).findFirst().get();
+                System.out.println("Player " + winner.playerInfo.playerId + " wins!");
+                Set<Role> winningRoles = playerRoles.get(winner.playerInfo.playerId);
                 Integer wins = winsMap.get(winningRoles);
-                if(wins==null){
-                    wins=0;
+                if (wins == null) {
+                    wins = 0;
                 }
-                winsMap.put(winningRoles, wins+1);
+                winsMap.put(winningRoles, wins + 1);
 
-                wins = winsByPlayer.get(winner.myInfo.playerId);
-                if(wins==null){
-                    wins=0;
+                wins = winsByPlayer.get(winner.playerInfo.playerId);
+                if (wins == null) {
+                    wins = 0;
                 }
-                winsByPlayer.put(winner.myInfo.playerId, wins+1);
+                winsByPlayer.put(winner.playerInfo.playerId, wins + 1);
 
             } catch (Exception ex) {
                 exceptionGames++;
+                ex.printStackTrace();
             }
         }
-        System.out.println("Ran "+numberOfGames+" games with "+exceptionGames+" ending in exceptions");
+        System.out.println("Ran " + numberOfGames + " games with " + exceptionGames + " ending in exceptions");
         List<Map.Entry<Set<Role>, Integer>> sortedEntries = winsMap.entrySet().stream().sorted((l, r) -> {
             return l.getValue().compareTo(r.getValue());
         }).collect(Collectors.toList());

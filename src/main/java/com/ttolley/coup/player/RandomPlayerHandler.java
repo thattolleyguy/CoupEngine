@@ -20,8 +20,8 @@ public class RandomPlayerHandler extends PlayerHandler {
     final Random random;
     List<Action.ActionType> validTurnActions = Lists.newArrayList();
 
-    public RandomPlayerHandler(PlayerInfo myInfo, List<Integer> playerIds) {
-        super(myInfo, playerIds);
+    public RandomPlayerHandler(PlayerInfo myInfo, List<Integer> otherPlayerIds) {
+        super(myInfo, otherPlayerIds);
         validTurnActions.add(Action.ActionType.ASSASSINATE);
         validTurnActions.add(Action.ActionType.COUP);
         validTurnActions.add(Action.ActionType.EXCHANGE);
@@ -29,19 +29,18 @@ public class RandomPlayerHandler extends PlayerHandler {
         validTurnActions.add(Action.ActionType.INCOME);
         validTurnActions.add(Action.ActionType.STEAL);
         validTurnActions.add(Action.ActionType.TAX);
-        playerIds.remove(myInfo.playerId);
         random = new Random(myInfo.hashCode());
     }
 
     @Override
     public Action taketurn() {
 
-        if (myInfo.coins >= 10) {
-            int targetId = playerIds.get(random.nextInt(this.playerIds.size()));
-            while (targetId == myInfo.playerId) {
-                targetId = playerIds.get(random.nextInt(this.playerIds.size()));
+        if (playerInfo.coins >= 10) {
+            int targetId = otherPlayerIds.get(random.nextInt(this.otherPlayerIds.size()));
+            while (targetId == playerInfo.playerId) {
+                targetId = otherPlayerIds.get(random.nextInt(this.otherPlayerIds.size()));
             }
-            Action result = new Action(Action.ActionType.COUP, targetId);
+            Action result = new Action(Action.ActionType.COUP, playerInfo.playerId, targetId);
 
 
             return result;
@@ -56,10 +55,10 @@ public class RandomPlayerHandler extends PlayerHandler {
 
             switch (selection) {
                 case ASSASSINATE:
-                    selectedAction = myInfo.coins >= 3;
+                    selectedAction = playerInfo.coins >= 3;
                     break;
                 case COUP:
-                    selectedAction = myInfo.coins >= 7;
+                    selectedAction = playerInfo.coins >= 7;
                     break;
                 default:
                     selectedAction = true;
@@ -69,13 +68,13 @@ public class RandomPlayerHandler extends PlayerHandler {
 
         } while (!selectedAction);
         if (selection.requiresTarget) {
-            int targetId = playerIds.get(random.nextInt(this.playerIds.size()));
-            while (targetId == myInfo.playerId) {
-                targetId = playerIds.get(random.nextInt(this.playerIds.size()));
+            int targetId = otherPlayerIds.get(random.nextInt(this.otherPlayerIds.size()));
+            while (targetId == playerInfo.playerId) {
+                targetId = otherPlayerIds.get(random.nextInt(this.otherPlayerIds.size()));
             }
-            return new Action(selection, targetId);
+            return new Action(selection, playerInfo.playerId, targetId);
         } else
-            return new Action(selection);
+            return new Action(selection, playerInfo.playerId);
 
     }
 
@@ -87,37 +86,37 @@ public class RandomPlayerHandler extends PlayerHandler {
     @Override
     public Action respondToAction(Action action) {
         int num = random.nextInt(100);
-        switch(action.type){
+        switch (action.type) {
             case ASSASSINATE:
-                if(num <=50)
-                    return new Action(Action.ActionType.BLOCK_ASSASSINATION);
+                if (num <= 50)
+                    return new Action(Action.ActionType.BLOCK_ASSASSINATION, playerInfo.playerId);
                 else
-                    return new Action(Action.ActionType.ALLOW);
+                    return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
             case STEAL:
-                if(num<=33)
-                    return new Action(Action.ActionType.BLOCK_AS_AMBASSADOR);
-                else if(num<=67)
-                    return new Action(Action.ActionType.BLOCK_AS_CAPTAIN);
+                if (num <= 33)
+                    return new Action(Action.ActionType.BLOCK_AS_AMBASSADOR, playerInfo.playerId);
+                else if (num <= 67)
+                    return new Action(Action.ActionType.BLOCK_AS_CAPTAIN, playerInfo.playerId);
                 else
-                    return new Action(Action.ActionType.ALLOW);
+                    return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
             case FOREIGN_AID:
 
-                if(num <=50)
-                    return new Action(Action.ActionType.BLOCK_FOREIGN_AID);
+                if (num <= 50)
+                    return new Action(Action.ActionType.BLOCK_FOREIGN_AID, playerInfo.playerId);
                 else
-                    return new Action(Action.ActionType.ALLOW);
+                    return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
         }
-        return new Action(Action.ActionType.ALLOW);
+        return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
     }
 
     @Override
     public boolean challengeAction(Action action) {
-        return random.nextInt(playerIds.size()*2) ==0;
+        return random.nextInt(otherPlayerIds.size() * 2) == 0;
     }
 
     @Override
     public Role revealRole() {
-        return myInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).findFirst().get().getRole();
+        return playerInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).findFirst().get().getRole();
     }
 
     @Override
@@ -129,18 +128,17 @@ public class RandomPlayerHandler extends PlayerHandler {
     public Game.ExchangeResult exchangeRoles(List<Role> newRole, long rolesToKeep) {
         Set<Integer> indexesToKeep = Sets.newHashSet();
         long rolesLeftToPick = rolesToKeep;
-        while(rolesLeftToPick>0){
+        while (rolesLeftToPick > 0) {
             int index = random.nextInt(newRole.size());
-            while(indexesToKeep.contains(index))
-            {
+            while (indexesToKeep.contains(index)) {
                 index = random.nextInt(newRole.size());
             }
             indexesToKeep.add(index);
             rolesLeftToPick--;
         }
         Game.ExchangeResult result = new Game.ExchangeResult();
-        for (int i = 0; i <newRole.size(); i++) {
-            if(indexesToKeep.contains(i))
+        for (int i = 0; i < newRole.size(); i++) {
+            if (indexesToKeep.contains(i))
                 result.keepRole(newRole.get(i));
             else
                 result.returnRole(newRole.get(i));
@@ -155,6 +153,6 @@ public class RandomPlayerHandler extends PlayerHandler {
 
     @Override
     public void informDeath(int playerId) {
-        playerIds.remove((Integer)playerId);
+        otherPlayerIds.remove((Integer) playerId);
     }
 }

@@ -1,5 +1,6 @@
 package com.ttolley.coup;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.ttolley.coup.Role;
 
@@ -90,6 +91,9 @@ public class PlayerInfo {
             result = 31 * result + (revealed ? 1 : 0);
             return result;
         }
+    }
+    public String toString(){
+        return "Player " + playerId + " has " + coins + " coins and " + roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).count() + " cards alive.";
     }
 
 }

@@ -1,25 +1,24 @@
 package com.ttolley.coup;
 
-import com.ttolley.coup.Role;
-
 /**
  * Created by tylertolley on 2/7/17.
  */
 public class Action {
     public final ActionType type;
-    final Integer targetId;
-    Integer sourceId;
+    public final Integer targetPlayerId;
+    public final Integer sourcePlayerId;
     ActionResult result = ActionResult.SUCCEEDED_WITHOUT_CHALLENGE;
-    //Action countering;
 
-    public Action(ActionType type) {
+    public Action(ActionType type, Integer sourcePlayer) {
         this.type = type;
-        targetId=null;
+        this.sourcePlayerId = sourcePlayer;
+        targetPlayerId =null;
     }
 
-    public Action(ActionType type,  Integer targetId){
+    public Action(ActionType type,  Integer sourcePlayer, Integer targetPlayer){
         this.type = type;
-        this.targetId = targetId;
+        this.targetPlayerId = targetPlayer;
+        this.sourcePlayerId =sourcePlayer;
     }
 
     public enum ActionResult {
@@ -61,6 +60,10 @@ public class Action {
 
     public boolean hasFailed() {
         return this.result == ActionResult.FAILED_BY_CHALLENGE || this.result == ActionResult.FAILED_BY_COUNTER;
+    }
+
+    public String toString(){
+        return "Player " + sourcePlayerId + " does " + type.name() + " and claims " + type.requiredRole + " targeting player " + targetPlayerId;
     }
 
 

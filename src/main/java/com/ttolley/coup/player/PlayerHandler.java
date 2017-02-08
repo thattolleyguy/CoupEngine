@@ -1,5 +1,6 @@
 package com.ttolley.coup.player;
 
+import com.google.common.base.Predicates;
 import com.ttolley.coup.Action;
 import com.ttolley.coup.Game;
 import com.ttolley.coup.PlayerInfo;
@@ -7,16 +8,18 @@ import com.ttolley.coup.Role;
 
 import java.util.List;
 
+import static sun.audio.AudioPlayer.player;
+
 /**
  * Created by tylertolley on 2/7/17.
  */
 public abstract class PlayerHandler {
-    public PlayerInfo myInfo;
-    public final List<Integer> playerIds;
+    public PlayerInfo playerInfo;
+    public final List<Integer> otherPlayerIds;
 
-    public PlayerHandler(PlayerInfo myInfo, List<Integer> playerIds){
-        this.myInfo = myInfo;
-        this.playerIds = playerIds;
+    public PlayerHandler(PlayerInfo playerInfo, List<Integer> otherPlayerIds){
+        this.playerInfo = playerInfo;
+        this.otherPlayerIds = otherPlayerIds;
     }
 
     public abstract Action taketurn();
@@ -37,4 +40,6 @@ public abstract class PlayerHandler {
     public abstract void informReveal(int playerId, Role revealedRole);
 
     public abstract void informDeath(int playerId);
+
+
 }
