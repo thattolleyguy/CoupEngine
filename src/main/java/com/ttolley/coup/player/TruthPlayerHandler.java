@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ttolley.coup.Action;
-import com.ttolley.coup.Game;
+import com.ttolley.coup.Counteraction;
 import com.ttolley.coup.PlayerInfo;
 import com.ttolley.coup.Role;
 
@@ -21,10 +21,10 @@ public class TruthPlayerHandler extends PlayerHandler {
 
     final Random random;
     List<Action.ActionType> validTurnActions = Lists.newArrayList();
-    List<Action.ActionType> validCounteractions = Lists.newArrayList();
+    List<Counteraction.CounteractionType> validCounteractions = Lists.newArrayList();
 
     static Map<Role, Action.ActionType> actionTypeMap;
-    static Map<Role, Action.ActionType> counteractionTypeMap;
+    static Map<Role, Counteraction.CounteractionType> counteractionTypeMap;
 
     static {
         actionTypeMap = Maps.newHashMap();
@@ -33,10 +33,10 @@ public class TruthPlayerHandler extends PlayerHandler {
         actionTypeMap.put(Role.ASSASSIN, Action.ActionType.ASSASSINATE);
         actionTypeMap.put(Role.CAPTAIN, Action.ActionType.STEAL);
         actionTypeMap.put(Role.DUKE, Action.ActionType.TAX);
-        counteractionTypeMap.put(Role.AMBASSADOR, Action.ActionType.BLOCK_AS_AMBASSADOR);
-        counteractionTypeMap.put(Role.CONTESSA, Action.ActionType.BLOCK_ASSASSINATION);
-        counteractionTypeMap.put(Role.CAPTAIN, Action.ActionType.BLOCK_AS_CAPTAIN);
-        counteractionTypeMap.put(Role.DUKE, Action.ActionType.BLOCK_FOREIGN_AID);
+        counteractionTypeMap.put(Role.AMBASSADOR, Counteraction.CounteractionType.BLOCK_AS_AMBASSADOR);
+        counteractionTypeMap.put(Role.CONTESSA, Counteraction.CounteractionType.BLOCK_ASSASSINATION);
+        counteractionTypeMap.put(Role.CAPTAIN, Counteraction.CounteractionType.BLOCK_AS_CAPTAIN);
+        counteractionTypeMap.put(Role.DUKE, Counteraction.CounteractionType.BLOCK_FOREIGN_AID);
     }
 
 
@@ -114,12 +114,12 @@ public class TruthPlayerHandler extends PlayerHandler {
     }
 
     @Override
-    public Action respondToAction(Action action) {
-        for (Action.ActionType validCounteraction : validCounteractions) {
+    public Counteraction counteract(Action action) {
+        for (Counteraction.CounteractionType validCounteraction : validCounteractions) {
             if (validCounteraction.counters == action.type)
-                return new Action(validCounteraction, playerInfo.playerId);
+                return new Counteraction(validCounteraction, playerInfo.playerId, action);
         }
-        return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
+        return new Counteraction(Counteraction.CounteractionType.ALLOW, playerInfo.playerId, action);
     }
 
     @Override
@@ -142,23 +142,23 @@ public class TruthPlayerHandler extends PlayerHandler {
     }
 
     @Override
-    public Game.ExchangeResult exchangeRoles(List<Role> newRole, long rolesToKeep) {
+    public Action.ExchangeResult exchangeRoles(List<Role> rolesToChooseFrom, long rolesToKeep) {
         Set<Integer> indexesToKeep = Sets.newHashSet();
         long rolesLeftToPick = rolesToKeep;
         while (rolesLeftToPick > 0) {
-            int index = random.nextInt(newRole.size());
+            int index = random.nextInt(rolesToChooseFrom.size());
             while (indexesToKeep.contains(index)) {
-                index = random.nextInt(newRole.size());
+                index = random.nextInt(rolesToChooseFrom.size());
             }
             indexesToKeep.add(index);
             rolesLeftToPick--;
         }
-        Game.ExchangeResult result = new Game.ExchangeResult();
-        for (int i = 0; i < newRole.size(); i++) {
+        Action.ExchangeResult result = new Action.ExchangeResult();
+        for (int i = 0; i < rolesToChooseFrom.size(); i++) {
             if (indexesToKeep.contains(i))
-                result.keepRole(newRole.get(i));
+                result.keepRole(rolesToChooseFrom.get(i));
             else
-                result.returnRole(newRole.get(i));
+                result.returnRole(rolesToChooseFrom.get(i));
         }
         return result;
     }
@@ -171,5 +171,15 @@ public class TruthPlayerHandler extends PlayerHandler {
     @Override
     public void informDeath(int playerId) {
         otherPlayerIds.remove((Integer) playerId);
+    }
+
+    @Override
+    public boolean challengeCounteraction(Counteraction counteraction) {
+        return false;
+    }
+
+    @Override
+    public void informCounteraction(Counteraction counteraction) {
+
     }
 }

@@ -4,7 +4,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.ttolley.coup.Action;
-import com.ttolley.coup.Game;
+import com.ttolley.coup.Counteraction;
 import com.ttolley.coup.PlayerInfo;
 import com.ttolley.coup.Role;
 
@@ -84,34 +84,35 @@ public class RandomPlayerHandler extends PlayerHandler {
     }
 
     @Override
-    public Action respondToAction(Action action) {
+    public Counteraction counteract(Action action) {
         int num = random.nextInt(100);
         switch (action.type) {
             case ASSASSINATE:
                 if (num <= 50)
-                    return new Action(Action.ActionType.BLOCK_ASSASSINATION, playerInfo.playerId);
+                    return new Counteraction(Counteraction.CounteractionType.BLOCK_ASSASSINATION, playerInfo.playerId, action);
                 else
-                    return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
+                    return new Counteraction(Counteraction.CounteractionType.ALLOW, playerInfo.playerId, action);
             case STEAL:
                 if (num <= 33)
-                    return new Action(Action.ActionType.BLOCK_AS_AMBASSADOR, playerInfo.playerId);
+                    return new Counteraction(Counteraction.CounteractionType.BLOCK_AS_AMBASSADOR, playerInfo.playerId, action);
                 else if (num <= 67)
-                    return new Action(Action.ActionType.BLOCK_AS_CAPTAIN, playerInfo.playerId);
+                    return new Counteraction(Counteraction.CounteractionType.BLOCK_AS_CAPTAIN, playerInfo.playerId, action);
                 else
-                    return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
+                    return new Counteraction(Counteraction.CounteractionType.ALLOW, playerInfo.playerId, action);
             case FOREIGN_AID:
 
                 if (num <= 50)
-                    return new Action(Action.ActionType.BLOCK_FOREIGN_AID, playerInfo.playerId);
+                    return new Counteraction(Counteraction.CounteractionType.BLOCK_FOREIGN_AID, playerInfo.playerId, action);
                 else
-                    return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
+                    return new Counteraction(Counteraction.CounteractionType.ALLOW, playerInfo.playerId, action);
         }
-        return new Action(Action.ActionType.ALLOW, playerInfo.playerId);
+        return new Counteraction(Counteraction.CounteractionType.ALLOW, playerInfo.playerId, action);
     }
 
     @Override
     public boolean challengeAction(Action action) {
-        return random.nextInt(otherPlayerIds.size() * 2) == 0;
+//        return random.nextInt(otherPlayerIds.size() * 2) == 0;
+        return false;
     }
 
     @Override
@@ -125,23 +126,23 @@ public class RandomPlayerHandler extends PlayerHandler {
     }
 
     @Override
-    public Game.ExchangeResult exchangeRoles(List<Role> newRole, long rolesToKeep) {
+    public Action.ExchangeResult exchangeRoles(List<Role> rolesToChooseFrom, long rolesToKeep) {
         Set<Integer> indexesToKeep = Sets.newHashSet();
         long rolesLeftToPick = rolesToKeep;
         while (rolesLeftToPick > 0) {
-            int index = random.nextInt(newRole.size());
+            int index = random.nextInt(rolesToChooseFrom.size());
             while (indexesToKeep.contains(index)) {
-                index = random.nextInt(newRole.size());
+                index = random.nextInt(rolesToChooseFrom.size());
             }
             indexesToKeep.add(index);
             rolesLeftToPick--;
         }
-        Game.ExchangeResult result = new Game.ExchangeResult();
-        for (int i = 0; i < newRole.size(); i++) {
+        Action.ExchangeResult result = new Action.ExchangeResult();
+        for (int i = 0; i < rolesToChooseFrom.size(); i++) {
             if (indexesToKeep.contains(i))
-                result.keepRole(newRole.get(i));
+                result.keepRole(rolesToChooseFrom.get(i));
             else
-                result.returnRole(newRole.get(i));
+                result.returnRole(rolesToChooseFrom.get(i));
         }
         return result;
     }
@@ -154,5 +155,15 @@ public class RandomPlayerHandler extends PlayerHandler {
     @Override
     public void informDeath(int playerId) {
         otherPlayerIds.remove((Integer) playerId);
+    }
+
+    @Override
+    public boolean challengeCounteraction(Counteraction counteraction) {
+        return random.nextInt(otherPlayerIds.size() * 2) == 0;
+    }
+
+    @Override
+    public void informCounteraction(Counteraction counteraction) {
+
     }
 }

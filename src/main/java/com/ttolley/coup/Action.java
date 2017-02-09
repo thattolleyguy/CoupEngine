@@ -1,5 +1,9 @@
 package com.ttolley.coup;
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
 /**
  * Created by tylertolley on 2/7/17.
  */
@@ -12,13 +16,13 @@ public class Action {
     public Action(ActionType type, Integer sourcePlayer) {
         this.type = type;
         this.sourcePlayerId = sourcePlayer;
-        targetPlayerId =null;
+        targetPlayerId = null;
     }
 
-    public Action(ActionType type,  Integer sourcePlayer, Integer targetPlayer){
+    public Action(ActionType type, Integer sourcePlayer, Integer targetPlayer) {
         this.type = type;
         this.targetPlayerId = targetPlayer;
-        this.sourcePlayerId =sourcePlayer;
+        this.sourcePlayerId = sourcePlayer;
     }
 
     public enum ActionResult {
@@ -29,26 +33,19 @@ public class Action {
     }
 
     public enum ActionType {
-        INCOME(null, null, false),
-        FOREIGN_AID(null, null, false),
-        COUP(null, null, true),
-        STEAL(Role.CAPTAIN, null, true),
-        ASSASSINATE(Role.ASSASSIN, null, true),
-        TAX(Role.DUKE, null, false),
-        EXCHANGE(Role.AMBASSADOR, null, false),
-        BLOCK_ASSASSINATION(Role.CONTESSA, ASSASSINATE, false),
-        BLOCK_AS_CAPTAIN(Role.CAPTAIN, STEAL, false),
-        BLOCK_AS_AMBASSADOR(Role.AMBASSADOR, STEAL, false),
-        BLOCK_FOREIGN_AID(Role.DUKE,FOREIGN_AID, false),
-        ALLOW(null, null, false);
+        INCOME(null, false),
+        FOREIGN_AID(null, false),
+        COUP(null, true),
+        STEAL(Role.CAPTAIN, true),
+        ASSASSINATE(Role.ASSASSIN, true),
+        TAX(Role.DUKE, false),
+        EXCHANGE(Role.AMBASSADOR, false);
 
         public final Role requiredRole;
-        public final ActionType counters;
         public final boolean requiresTarget;
 
-        ActionType(Role requiredRole, ActionType counters, boolean requiresTarget) {
+        ActionType(Role requiredRole, boolean requiresTarget) {
             this.requiredRole = requiredRole;
-            this.counters = counters;
             this.requiresTarget = requiresTarget;
         }
 
@@ -62,10 +59,26 @@ public class Action {
         return this.result == ActionResult.FAILED_BY_CHALLENGE || this.result == ActionResult.FAILED_BY_COUNTER;
     }
 
-    public String toString(){
+    public String toString() {
         return "Player " + sourcePlayerId + " does " + type.name() + " and claims " + type.requiredRole + " targeting player " + targetPlayerId;
     }
 
 
+    public static class ExchangeResult {
+        final List<Role> toKeep = Lists.newArrayList();
+        final List<Role> toReturn = Lists.newArrayList();
 
+        public ExchangeResult keepRole(Role role) {
+            toKeep.add(role);
+            return this;
+        }
+
+        public ExchangeResult returnRole(Role role) {
+            toReturn.add(role);
+            return this;
+        }
+
+
+
+    }
 }
