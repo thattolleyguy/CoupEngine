@@ -3,6 +3,12 @@ package com.ttolley.coup;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.ttolley.coup.model.Action;
+import com.ttolley.coup.model.Counteraction;
+import com.ttolley.coup.model.GameConfig;
+import com.ttolley.coup.model.GameResult;
+import com.ttolley.coup.model.PlayerInfo;
+import com.ttolley.coup.player.PlayerCreator;
 import com.ttolley.coup.player.PlayerHandler;
 import com.ttolley.coup.player.RandomPlayerHandler;
 import com.ttolley.coup.player.TruthPlayerHandler;
@@ -13,10 +19,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static com.ttolley.coup.Action.ActionResult;
-import static com.ttolley.coup.Counteraction.CounteractionResult;
+import static com.ttolley.coup.model.Action.ActionResult;
+import static com.ttolley.coup.model.Counteraction.CounteractionResult;
 
 /**
  * Created by tylertolley on 2/7/17.
@@ -70,7 +77,7 @@ public class Game {
         Collections.shuffle(deck);
     }
 
-    public Game(GameConfig config){
+    public Game(GameConfig config, PlayerCreator creator){
         this.numOfPlayers = config.playerTypes.size();
         initializeDeck(this.numOfPlayers);
         List<Integer> playerIds = initializePlayerInfo(numOfPlayers);
@@ -79,7 +86,7 @@ public class Game {
             PlayerInfo player = players.get(i);
             ArrayList<Integer> otherPlayerIds = Lists.newArrayList(playerIds);
             otherPlayerIds.remove((Integer) player.playerId);
-            playerHandlersById.put(player.playerId, config.playerTypes.get(i).create(player, otherPlayerIds));
+            playerHandlersById.put(player.playerId, creator.create(config.playerTypes.get(i), player, otherPlayerIds));
         }
 
     }
@@ -327,12 +334,12 @@ public class Game {
                 final Action.ExchangeResult result = currentPlayerHandler.exchangeRoles(newRoles, rolesToKeep);
                 //validate result has right number of roles to keep
 
-                final MutableInteger curRoleIndex = new MutableInteger(0);
+                final AtomicInteger curRoleIndex = new AtomicInteger(0);
                 currentPlayerHandler.playerInfo.roleStates.stream().filter(Predicates.not(PlayerInfo.RoleState::isRevealed)).forEach(rs -> {
-                    if (curRoleIndex.getValue() < result.toKeep.size()) {
-                        Role newRole = result.toKeep.get(curRoleIndex.getValue());
+                    if (curRoleIndex.get() < result.toKeep.size()) {
+                        Role newRole = result.toKeep.get(curRoleIndex.get());
                         rs.setRole(newRole);
-                        curRoleIndex.increment();
+                        curRoleIndex.incrementAndGet();
                     }
                 });
                 currentPlayerHandler.rolesUpdated();
@@ -362,5 +369,8 @@ public class Game {
         }
     }
 
+    public GameResult getResults() {
+    	return new GameResult(players);
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.ttolley.coup;
+package com.ttolley.coup.model;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
@@ -65,7 +65,7 @@ public class PlayerInfo {
             return role;
         }
 
-        void setRole(Role role){
+        public void setRole(Role role){
             this.role = role;
         }
 

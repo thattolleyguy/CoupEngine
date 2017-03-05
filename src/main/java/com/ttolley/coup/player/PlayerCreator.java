@@ -1,13 +1,14 @@
 package com.ttolley.coup.player;
 
-import com.ttolley.coup.PlayerInfo;
-
 import java.util.List;
+
+import com.ttolley.coup.model.PlayerInfo;
 
 /**
  * Created by tylertolley on 2/9/17.
  */
 public interface PlayerCreator {
+
     // Factory method for creating a player
-    public PlayerHandler create(PlayerInfo playerInfo, List<Integer> otherPlayerIds);
+    public PlayerHandler create(String type, PlayerInfo playerInfo, List<Integer> otherPlayerIds);
 }

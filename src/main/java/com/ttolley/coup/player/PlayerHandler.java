@@ -1,9 +1,9 @@
 package com.ttolley.coup.player;
 
-import com.ttolley.coup.Action;
-import com.ttolley.coup.Counteraction;
-import com.ttolley.coup.PlayerInfo;
 import com.ttolley.coup.Role;
+import com.ttolley.coup.model.Action;
+import com.ttolley.coup.model.Counteraction;
+import com.ttolley.coup.model.PlayerInfo;
 
 import java.util.List;
 
@@ -19,6 +19,10 @@ public abstract class PlayerHandler {
         this.otherPlayerIds = otherPlayerIds;
     }
 
+    public String getHandlerId() {
+    	return this.getClass().getName();
+    }
+    
     /**
      * Called whenever is is your turn.
      * @return Action that you want to perform

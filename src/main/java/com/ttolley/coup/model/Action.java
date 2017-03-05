@@ -1,6 +1,7 @@
-package com.ttolley.coup;
+package com.ttolley.coup.model;
 
 import com.google.common.collect.Lists;
+import com.ttolley.coup.Role;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class Action {
     public final ActionType type;
     public final Integer targetPlayerId;
     public final Integer sourcePlayerId;
-    ActionResult result = ActionResult.SUCCEEDED_WITHOUT_CHALLENGE;
+    public ActionResult result = ActionResult.SUCCEEDED_WITHOUT_CHALLENGE;
 
     public Action(ActionType type, Integer sourcePlayer) {
         this.type = type;
@@ -65,8 +66,8 @@ public class Action {
 
 
     public static class ExchangeResult {
-        final List<Role> toKeep = Lists.newArrayList();
-        final List<Role> toReturn = Lists.newArrayList();
+        public final List<Role> toKeep = Lists.newArrayList();
+        public final List<Role> toReturn = Lists.newArrayList();
 
         public ExchangeResult keepRole(Role role) {
             toKeep.add(role);
