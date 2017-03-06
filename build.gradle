@@ -22,8 +22,9 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.springframework.boot:spring-boot-devtools")
+    compile("org.springframework:spring-jdbc")
     
     compile group:'com.google.guava', name: 'guava', version: '21.0'
     

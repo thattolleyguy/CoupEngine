@@ -1,9 +1,11 @@
 package com.ttolley.coup;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Created by tylertolley on 2/9/17.
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @ComponentScan(basePackageClasses = {Application.class})
 @Import(CoupApplicationConfiguration.class)
+@EnableAutoConfiguration
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

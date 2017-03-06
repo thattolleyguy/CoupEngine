@@ -11,4 +11,6 @@ public interface PlayerCreator {
 
     // Factory method for creating a player
     public PlayerHandler create(String type, PlayerInfo playerInfo, List<Integer> otherPlayerIds);
+    
+    public List<String> getPlayerTypes();
 }

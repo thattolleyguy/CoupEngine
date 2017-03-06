@@ -10,15 +10,17 @@ import java.util.List;
  * Created by tylertolley on 2/7/17.
  */
 public class PlayerInfo {
+	public String type;
     public int coins;
     public List<RoleState> roleStates = Lists.newArrayList();
     public boolean dead = false;
     public final int playerId;
 
 
-    public PlayerInfo(int playerId, int numOfCoins, Role... roles)
+    public PlayerInfo(String type, int playerId, int numOfCoins, Role... roles)
     {
-        this.playerId = playerId;
+        this.type = type;
+    	this.playerId = playerId;
         coins = numOfCoins;
         for (Role role : roles) {
             roleStates.add(new RoleState(role));

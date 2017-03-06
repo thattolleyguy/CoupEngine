@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-route.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-resource.min.js"></script>
+<body>
+
+<script src="/js/coup/coupApp.js"></script>
+<script src="/js/coup/coupService.js"></script>
+<script src="/js/coup/coupCtrl.js"></script>
+
+<div ng-app="coupApp" ng-controller="coupCtrl">
+
+  <div id="control">
+      <div id="gamecount">
+          Game Count: <input ng-model="gamecount"></input>
+      </div>
+      <select ng-model="playerpick" ng-options="player.type for player in playerTypes"></select>
+      <button ng-click="addPlayer()" ng-disabled="maxplayers">Add Player</button>
+      
+      <div id="playerlist">
+        <li ng-repeat="player in players">
+             {{player.type}} <button ng-click="removePlayer($index)">Remove</button>
+        </li>
+      </div>
+      
+      <button ng-click="rungame()" ng-disabled="maxplayers">Run Simulation</button>
+  </div>
+
+  <div id="resultpanel">
+      <p ng-model="results"></p>
+  </div>
+</div>
+
+</body>
+</html>

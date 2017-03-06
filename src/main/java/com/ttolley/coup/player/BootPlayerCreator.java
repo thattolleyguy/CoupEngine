@@ -8,6 +8,7 @@ import java.util.function.BiFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.ttolley.coup.model.PlayerInfo;
 
@@ -31,6 +32,10 @@ public class BootPlayerCreator implements PlayerCreator {
 		return handlers.get(id).createMethod.apply(playerInfo, otherPlayerIds);
 	}
 
+	public List<String> getPlayerTypes() {
+		return Lists.newArrayList(handlers.keySet());
+	}
+	
 	public static class PlayerHandlerSupplier {
 		String id;
 		BiFunction<PlayerInfo, List<Integer>, PlayerHandler> createMethod;
