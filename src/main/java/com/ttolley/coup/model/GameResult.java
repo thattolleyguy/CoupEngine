@@ -7,7 +7,6 @@ public class GameResult {
 	private List<PlayerInfo> playerInfo;
 
 	public GameResult(List<PlayerInfo> playerInfo) {
-		super();
 		this.playerInfo = playerInfo;
 	}
 

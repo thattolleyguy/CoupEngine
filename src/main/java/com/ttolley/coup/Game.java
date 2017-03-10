@@ -1,19 +1,5 @@
 package com.ttolley.coup;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.ttolley.coup.model.Action;
-import com.ttolley.coup.model.Counteraction;
-import com.ttolley.coup.model.GameConfig;
-import com.ttolley.coup.model.GameResult;
-import com.ttolley.coup.model.PlayerInfo;
-import com.ttolley.coup.player.PlayerCreator;
-import com.ttolley.coup.player.PlayerHandler;
-import com.ttolley.coup.player.RandomPlayerHandler;
-import com.ttolley.coup.player.TruthPlayerHandler;
-import com.ttolley.coup.repository.GameHistoryManager;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -23,8 +9,19 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static com.ttolley.coup.model.Action.ActionResult;
-import static com.ttolley.coup.model.Counteraction.CounteractionResult;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.ttolley.coup.model.Action;
+import com.ttolley.coup.model.Action.ActionResult;
+import com.ttolley.coup.model.Counteraction;
+import com.ttolley.coup.model.Counteraction.CounteractionResult;
+import com.ttolley.coup.model.GameConfig;
+import com.ttolley.coup.model.GameResult;
+import com.ttolley.coup.model.PlayerInfo;
+import com.ttolley.coup.player.PlayerCreator;
+import com.ttolley.coup.player.PlayerHandler;
+import com.ttolley.coup.repository.GameHistoryManager;
 
 /**
  * Created by tylertolley on 2/7/17.

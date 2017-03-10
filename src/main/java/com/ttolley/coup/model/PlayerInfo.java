@@ -16,7 +16,11 @@ public class PlayerInfo {
     public boolean dead = false;
     public final int playerId;
 
-
+    public PlayerInfo(String type, int playerId, boolean dead) {
+    	this(type, playerId, -1);
+    	this.dead = dead;
+    }
+    
     public PlayerInfo(String type, int playerId, int numOfCoins, Role... roles)
     {
         this.type = type;

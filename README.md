@@ -3,8 +3,9 @@ Simulate different AIs for coup playing against each other
 
 ## Add Your AI
 1. Extend PlayerHandler with you AIs logic.
-2. Add your AI type to the `PlayerTypes` enum. This enum is used to build the players when the game is initialized
+2. Add a PlayerHandlerSupplier to CoupApplicationConfiguration for your AI
 
 ## Run
-1. Change the game config in `Application.main` method to your desired simulation
-2. Run `Application.main`
+1. Run `Application.main`
+2. Open "http://localhost:8080/coup/gui" in your brower
+3. Enter the desired configuration and click "Run Simulation"

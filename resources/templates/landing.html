@@ -1,36 +1,121 @@
 <!DOCTYPE HTML>
 <html lang="en-US">
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-route.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-resource.min.js"></script>
+<head>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-route.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-resource.min.js"></script>
 <body>
 
-<script src="/js/coup/coupApp.js"></script>
-<script src="/js/coup/coupService.js"></script>
-<script src="/js/coup/coupCtrl.js"></script>
+	<style>
+body {
+	margin: 0;
+	padding: 0;
+}
 
-<div ng-app="coupApp" ng-controller="coupCtrl">
+ul {
+	list-style-type: none;
+	margin: 10px;
+	padding-right: 10px;
+	padding-left: 10px;
+	border: 1px solid #ccc;
+	width: 200px;
+	background-color: #ffffff;
+}
 
-  <div id="control">
-      <div id="gamecount">
-          Game Count: <input ng-model="gamecount"></input>
-      </div>
-      <select ng-model="playerpick" ng-options="player.type for player in playerTypes"></select>
-      <button ng-click="addPlayer()" ng-disabled="maxplayers">Add Player</button>
-      
-      <div id="playerlist">
-        <li ng-repeat="player in players">
-             {{player.type}} <button ng-click="removePlayer($index)">Remove</button>
-        </li>
-      </div>
-      
-      <button ng-click="rungame()" ng-disabled="maxplayers">Run Simulation</button>
-  </div>
+ul li {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
-  <div id="resultpanel">
-      <p ng-model="results"></p>
-  </div>
-</div>
+ul.simresult {
+	list-style-type: none;
+	border: 1px solid #ccc;
+	width: 500px;
+	background-color: #ddddff;
+}
+
+
+div.leftnav {
+	background-color: #f1f1f1;
+	margin: 0px;
+	padding: 10px;
+	width: 260px;
+	height: 100vh;
+}
+
+div.leftnav input {
+    margin: 10px;
+}
+
+div.scrollbox {
+	height: 120px;
+	width: 120px;
+	border: 1px solid #ccc;
+	overflow: auto;
+}
+
+div.resultbox {
+    border: 1px solid #ccc;
+    background-color: #eeeeff;
+    padding: 10px;
+}
+
+.column {
+	float: left;
+	padding: 15px;
+}
+
+.clearfix::after {
+	content: "";
+	clear: both;
+	display: table;
+}
+</style>
+
+	<script src="/js/coup/coupApp.js"></script>
+	<script src="/js/coup/coupService.js"></script>
+	<script src="/js/coup/coupCtrl.js"></script>
+
+	<div ng-app="coupApp" ng-controller="coupCtrl"
+		style="padding: 0; margin: 0;">
+
+		<div class="clearfix" style="height: 500px;">
+			<div id="control" class="column leftnav">
+			
+				Game Count: <input ng-model="gamecount"></input>
+	
+				<select ng-model="playerpick"
+					ng-options="player.type for player in playerTypes"></select>
+				<button ng-click="addPlayer()" ng-disabled="maxplayers">Add
+					Player</button>
+
+					<ul>
+						<li ng-repeat="player in players"><span>{{player.type}}
+								<i class="fa fa-times-circle" style="color: red;"
+								ng-click="removePlayer($index)" />
+						</span></li>
+					</ul>
+
+				<button ng-click="rungame()" ng-disabled="maxplayers">Run
+					Simulation</button>
+			</div>
+
+			<div id="main" class="column mainpanel">
+			    <div id="gamestats" class="center"></div>
+			 	<div id="resultpanel" class="center">
+					<div ng-include="resultsURL"></div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
 
 </body>
 </html>

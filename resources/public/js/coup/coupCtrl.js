@@ -7,6 +7,14 @@ app.controller("coupCtrl", function($scope, $http, CoupSvc) {
 		});
 	}
 	
+	$scope.loadSims = function() {
+		$http.get('/coup/game').success(function (data) {
+			$scope.sims = data;
+		}).error(function () {
+			$scope.sims = [];
+		});
+	}
+	
 	$scope.addPlayer = function() {
 		var newplayer = { 
 			type: $scope.playerpick.type
@@ -24,18 +32,31 @@ app.controller("coupCtrl", function($scope, $http, CoupSvc) {
 	}
 	
 	$scope.rungame = function() {
-		var url = "/coup/game?gameCount=" + ($scope.gamecount || 1);
+		var url = "/coup/game";
 		var types = $scope.players.map(function(player) {
 			return player['type'];
 		});
-		var body = { playerTypes: types };
+		var body = { runCount: $scope.gamecount, playerTypes: types };
 		$http.post(url, body).success(function (data) {
-			$scope.results = data;
+			var results = data;
+			results['winners'] = results['games'].map(function(x) { 
+				var winnerIndex = x['playerInfo'].findIndex(function(p) {
+					return !p['dead'];
+				});
+				return {
+						index: winnerIndex,
+						info: x['playerInfo'][winnerIndex]
+				};
+			});
+			$scope.results = results;
 		}).error(function() {
 			$scope.results = { error: "Simulation failed" };
 		});
+		
+		$scope.resultsURL = "gui/result"
 	}
 	
 	$scope.refreshPlayerTypes();
 	$scope.players = [];
+	$scope.loadSims();
 });

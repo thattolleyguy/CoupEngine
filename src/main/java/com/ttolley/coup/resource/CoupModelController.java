@@ -11,4 +11,9 @@ public class CoupModelController {
 	public String landing(Model model) {
 		return "landing";
 	}
+	
+	@RequestMapping("/coup/gui/result") 
+	public String result(Model model) {
+		return "result";
+	}
 }
