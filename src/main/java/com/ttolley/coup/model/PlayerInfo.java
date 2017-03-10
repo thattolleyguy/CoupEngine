@@ -1,4 +1,4 @@
-package com.ttolley.coup;
+package com.ttolley.coup.model;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
@@ -10,15 +10,21 @@ import java.util.List;
  * Created by tylertolley on 2/7/17.
  */
 public class PlayerInfo {
+	public String type;
     public int coins;
     public List<RoleState> roleStates = Lists.newArrayList();
     public boolean dead = false;
     public final int playerId;
 
-
-    public PlayerInfo(int playerId, int numOfCoins, Role... roles)
+    public PlayerInfo(String type, int playerId, boolean dead) {
+    	this(type, playerId, -1);
+    	this.dead = dead;
+    }
+    
+    public PlayerInfo(String type, int playerId, int numOfCoins, Role... roles)
     {
-        this.playerId = playerId;
+        this.type = type;
+    	this.playerId = playerId;
         coins = numOfCoins;
         for (Role role : roles) {
             roleStates.add(new RoleState(role));
@@ -65,7 +71,7 @@ public class PlayerInfo {
             return role;
         }
 
-        void setRole(Role role){
+        public void setRole(Role role){
             this.role = role;
         }
 

@@ -1,6 +1,8 @@
-package com.ttolley.coup;
+package com.ttolley.coup.model;
 
-import static com.ttolley.coup.Action.ActionType.*;
+import static com.ttolley.coup.model.Action.ActionType.*;
+
+import com.ttolley.coup.Role;
 
 /**
  * Created by tylertolley on 2/8/17.
@@ -9,7 +11,7 @@ public class Counteraction {
     public final CounteractionType type;
     public final Integer sourcePlayerId;
     public final Action counteredAction;
-    CounteractionResult result = CounteractionResult.SUCCEEDED_WITHOUT_CHALLENGE;
+    public CounteractionResult result = CounteractionResult.SUCCEEDED_WITHOUT_CHALLENGE;
 
     public Counteraction(CounteractionType type, Integer sourcePlayer, Action counteredAction) {
         this.type = type;

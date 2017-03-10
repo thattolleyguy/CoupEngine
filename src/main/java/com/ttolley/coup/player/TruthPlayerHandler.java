@@ -4,10 +4,10 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.ttolley.coup.Action;
-import com.ttolley.coup.Counteraction;
-import com.ttolley.coup.PlayerInfo;
 import com.ttolley.coup.Role;
+import com.ttolley.coup.model.Action;
+import com.ttolley.coup.model.Counteraction;
+import com.ttolley.coup.model.PlayerInfo;
 
 import java.util.List;
 import java.util.Map;

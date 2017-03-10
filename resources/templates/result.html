@@ -1,0 +1,8 @@
+<div class="resultbox">
+  {{results.testLabel}} 
+  <ul  class="simresult">
+  <li ng-repeat="winner in results.winners">
+     Player {{winner.index}} ({{winner.info.type}}) won game {{$index}}
+  </li>
+  </ul>
+</div>
